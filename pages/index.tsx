@@ -1,10 +1,10 @@
 import { hasCookie } from 'cookies-next'
 
-export default function Home() {
+import Home from '@/components/pages/Home'
+
+export default function HomePage() {
   return (
-    <>
-      hello
-    </>
+    <Home />
   )
 }
 

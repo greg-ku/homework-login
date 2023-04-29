@@ -1,3 +1,6 @@
+import useSWR from 'swr'
+import { hasCookie, getCookie } from 'cookies-next'
+
 const API_URL = 'https://interview-test-api-2bfhetuihq-de.a.run.app'
 
 export const login = (username: string, password: string) => {
@@ -21,4 +24,25 @@ export const login = (username: string, password: string) => {
       return [undefined, new Error('Unexpected Error')]
     }
   )
+}
+
+const fetcher = (url, opts = {}, ...args) => {
+  const options = { ...opts }
+  if (hasCookie('token')) {
+    options.headers = {
+      ...(options?.headers),
+      Authorization: getCookie('token'),
+    }
+  }
+  return fetch(url, options, ...args)
+  .then(res => res.json())
+  .then(
+    (result) => result?.status === 'success'
+      ? result.data
+      : Promise.reject(result.error)
+  )
+}
+
+export const useUserData = () => {
+  return useSWR(`${API_URL}/user`, fetcher)
 }
