@@ -13,6 +13,7 @@ import {
   Space,
 } from '@mantine/core'
 import { IconAlertCircle } from '@tabler/icons-react'
+import isEmail from 'validator/lib/isEmail'
 import styled from '@emotion/styled'
 
 const StyledGrid = styled(Grid)`
@@ -44,6 +45,29 @@ const A = styled.a`
 export default function Login() {
   const [usernameErrorMsg, setUsernameErrorMsg] = useState('')
   const [passwordErrorMsg, setPasswordErrorMsg] = useState('')
+
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+
+  const onUsernameBlur = () => {
+    if (!username) {
+      setUsernameErrorMsg('帳號尚未輸入')
+    } else if (!isEmail(username)) {
+      setUsernameErrorMsg('請輸入正確的Email格式')
+    } else if (usernameErrorMsg) {
+      setUsernameErrorMsg('')
+    }
+  }
+
+  const onPasswordBlur = () => {
+    if (!password) {
+      setPasswordErrorMsg('密碼尚未輸入')
+    } else if (password?.length < 3) {
+      setPasswordErrorMsg('密碼輸入字數過少')
+    } else if (passwordErrorMsg) {
+      setPasswordErrorMsg('')
+    }
+  }
 
   return (
     <StyledGrid gutter={0}>
@@ -82,10 +106,14 @@ export default function Login() {
                   </div>
                 )
               }
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              onBlur={onUsernameBlur}
             />
             <Space h="sm" />
 
             <TextInput
+              type="password"
               label="Password"
               inputWrapperOrder={['label', 'input', 'description', 'error']}
               error={passwordErrorMsg}
@@ -98,6 +126,9 @@ export default function Login() {
                   </div>
                 )
               }
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              onBlur={onPasswordBlur}
             />
 
             <Space h="md" />
